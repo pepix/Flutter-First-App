@@ -20,6 +20,7 @@ class RandomWords extends StatefulWidget {
 
 class RandomWordsState extends State<RandomWords> {
     final _suggestions = <WordPair>[];
+    final _saved = new Set<WordPair>();
     final _biggerFont = const TextStyle(fontSize: 18.0);
 
     @override
@@ -36,25 +37,24 @@ class RandomWordsState extends State<RandomWords> {
 
     Widget _buildSuggestions() {
         return new ListView.builder(
-            padding: const EdgeInsets.all(16.0),
-            // The itemBuilder callback is called once per suggested word pairing,
-            // and places each suggestion into a ListTile row.
-            // For even rows, the function adds a ListTile row for the word pairing.
-            // For odd rows, the function adds a Divider widget to visually
-            // separate the entries. Note that the divider may be difficult
-            // to see on smaller devices.
+            padding: const EdgeInsets.all(8.0),
+            // itemBuilderのコールバックはwordParingがsuggestされるたびに一度だけ呼ばれる
+            // そしてリストタイルの行にそれぞれを配置する
+            // 偶数行ではこの関数は単語行のためにリストタイルを追加する
+            // 奇数行ではこの関数はディバイダーを追加して、エントリーを分ける
+            // 小さい端末だとディバイダーを見るのは難しいかもしれない
             itemBuilder: (context, i) {
-                // Add a one-pixel-high divider widget before each row in theListView.
+                // 1pxの高さのディバイダーをリストビューの１行ずつに追加
                 if (i.isOdd) return new Divider();
 
-                // The syntax "i ~/ 2" divides i by 2 and returns an integer result.
-                // For example: 1, 2, 3, 4, 5 becomes 0, 1, 1, 2, 2.
-                // This calculates the actual number of word pairings in the ListView,
+                // indexにはiを2で割った商の値がinteger型で入る
+                // 例えば：1, 2, 3, 4, 5 は 0, 1, 1, 2, 2になる
+                // これがリストビュー内のワードペアの実数を計算する
                 // minus the divider widgets.
                 final index = i ~/ 2;
-                // If you've reached the end of the available word pairings...
+                // もしあなたが利用可能なワードペアの最後に到達したら
                 if (index >= _suggestions.length) {
-                    // ...then generate 10 more and add them to the suggestions list.
+                    // 10個生成し、それらをリストに追加する
                     _suggestions.addAll(generateWordPairs().take(10));
                 }
                 return _buildRow(_suggestions[index]);
@@ -63,11 +63,26 @@ class RandomWordsState extends State<RandomWords> {
     }
 
     Widget _buildRow(WordPair pair) {
+        // pairが_savedに既に追加されていたらtrue
+        final alreadySaved = _saved.contains(pair);
         return new ListTile(
             title: new Text(
                 pair.asPascalCase,
                 style: _biggerFont,
             ),
+            trailing: new Icon(
+                alreadySaved ? Icons.favorite : Icons.favorite_border,
+                color: alreadySaved ? Colors.red : null,
+            ),
+            onTap: () {
+                setState(() {
+                    if (alreadySaved) {
+                        _saved.remove(pair);
+                    } else {
+                        _saved.add(pair);
+                    }
+                });
+            },
         );
     }
 
