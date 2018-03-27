@@ -36,8 +36,8 @@ class RandomWordsState extends State<RandomWords> {
             appBar: new AppBar(
                 title: new Text('Startup Name Generator'),
                 actions: <Widget>[
-                  //new IconButton(icon: new Icon(Icons.turned_in_not), onPressed: _pushSaved),
-                  new IconButton(icon: new Icon(Icons.turned_in_not), onPressed: _pushSave),
+                  new IconButton(icon: new Icon(Icons.turned_in_not), onPressed: _pushSaved),
+                  new IconButton(icon: new Icon(Icons.event), onPressed: _pushSave),
                 ],
             ),
             body: _buildSuggestions(),
@@ -96,11 +96,25 @@ class RandomWordsState extends State<RandomWords> {
     }
 
     void _pushSave() {
-      Navigator.of(context).push(
-        new MaterialPageRoute(
-          builder: (context) => new SavedWordsList()
-        )
-      );
+      Navigator.of(context).push(new PageRouteBuilder(
+          opaque: true,
+          transitionDuration: const Duration(milliseconds: 3000),
+          pageBuilder: (BuildContext context, _, __) {
+            return new SavedWordsList();
+          },
+          transitionsBuilder: (_, Animation<double> animation, __, Widget child) {
+            return new FadeTransition(
+              opacity: animation,
+              child: new RotationTransition(
+                turns: new Tween<double>(begin: 0.0, end: 5.0).animate(animation),
+                child: new RotationTransition(
+                  turns: new Tween(begin: 5.0, end: 15.0).animate(animation),
+                  child: child,
+                ),
+              ),
+            );
+          }
+      ));
     }
 
     void _pushSaved() {

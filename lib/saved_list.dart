@@ -19,5 +19,7 @@ class SavedWordsListState extends State<SavedWordsList> {
 
 Widget BuildList() {
 
-  return new Text("build list予定");
+  return new Center(
+    child: new Text("?"),
+  );
 }
