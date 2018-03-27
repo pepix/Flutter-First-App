@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:english_words/english_words.dart';
 
+import 'package:startup_namer/saved_list.dart';
+
 void main() => runApp(new MyApp());
 
 class MyApp extends StatelessWidget {
@@ -34,7 +36,8 @@ class RandomWordsState extends State<RandomWords> {
             appBar: new AppBar(
                 title: new Text('Startup Name Generator'),
                 actions: <Widget>[
-                    new IconButton(icon: new Icon(Icons.turned_in_not), onPressed: _pushSaved),
+                  //new IconButton(icon: new Icon(Icons.turned_in_not), onPressed: _pushSaved),
+                  new IconButton(icon: new Icon(Icons.turned_in_not), onPressed: _pushSave),
                 ],
             ),
             body: _buildSuggestions(),
@@ -90,6 +93,14 @@ class RandomWordsState extends State<RandomWords> {
                 });
             },
         );
+    }
+
+    void _pushSave() {
+      Navigator.of(context).push(
+        new MaterialPageRoute(
+          builder: (context) => new SavedWordsList()
+        )
+      );
     }
 
     void _pushSaved() {
